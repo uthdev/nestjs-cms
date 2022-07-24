@@ -1,5 +1,6 @@
+import Post from "@/posts/entities/post.entity";
 import { Exclude } from "class-transformer";
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class User extends BaseEntity {
@@ -14,8 +15,11 @@ export class User extends BaseEntity {
   public password!: string;
 
   @Column({ type: 'varchar', nullable: true })
-  firstName: string;
+  public firstName: string;
 
   @Column({ type: 'varchar', nullable: true })
-  lastName: string;  
+  public lastName: string;
+
+  @OneToMany(() => Post, (post: Post) => post.author)
+  public posts?: Post[];
 }
