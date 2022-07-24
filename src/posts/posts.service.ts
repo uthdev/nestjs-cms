@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThan, FindManyOptions, Repository } from 'typeorm';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import Post from './entities/post.entity';
+import {Post} from './entities/post.entity';
 
 @Injectable()
 export class PostsService {
@@ -63,11 +63,12 @@ export class PostsService {
   }
 
   public async update(id: string, updatePostDto: UpdatePostDto) {
-    const post = await this.postsRepository.findOne({ where: { id } });
+    const post = await this.postsRepository.findOne({ where: { id }, relations: ['author'] });
     if(!post) {
       throw new NotFoundException(`Post with id ${id} not found`);
     }
-    return this.postsRepository.merge(post, updatePostDto);
+    this.postsRepository.merge(post, updatePostDto);
+    return this.postsRepository.save(post);
   }
 
   public async remove(id: string): Promise<void>{

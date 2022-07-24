@@ -1,5 +1,3 @@
-
-
 import {
   Column,
   Entity,
@@ -8,15 +6,15 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   Index,
-  OneToMany,
   RelationId,
   CreateDateColumn
 } from 'typeorm';
-import {User} from '../../user/user.entity';
+import { User} from '../../user/user.entity';
+import { Category } from '@/categories/entities/category.entity';
 
 
 @Entity()
-class Post {
+export class Post {
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
@@ -34,10 +32,12 @@ class Post {
   @RelationId((post: Post) => post.author)
   public authorId: number;
 
+  @ManyToMany(() => Category, (category: Category) => category.posts)
+  @JoinTable()
+  public categories: Category[];
+
 
   @CreateDateColumn({ type: 'timestamp' })
   createdAt: Date;
 
 }
-
-export default Post;
