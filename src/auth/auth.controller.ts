@@ -1,9 +1,11 @@
-import { Body, Controller, Inject, Post, ClassSerializerInterceptor, UseInterceptors } from '@nestjs/common';
-import { User } from '@/user/user.entity';
+import { Body, Controller, Inject, Post, ClassSerializerInterceptor, UseInterceptors, Get, UseGuards, Req } from '@nestjs/common';
+import { User } from '../user/user.entity';
 import { RegisterDto, LoginDto } from './auth.dto';
 import { AuthService } from './auth.service';
+import { JwtAuthGuard } from './auth.guard';
+import RequestWithUser from './requestWithUser.interface';
 
-@Controller('users')
+@Controller('auth')
 export class AuthController {
   @Inject(AuthService)
   private readonly service: AuthService;
@@ -17,6 +19,12 @@ export class AuthController {
   @Post('login')
   public login(@Body() body: LoginDto): Promise<Record<string, string| never>> {
     return this.service.login(body);
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  me(@Req() req: RequestWithUser): User {
+    return req.user;
   }
 
 }

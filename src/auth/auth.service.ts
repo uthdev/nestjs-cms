@@ -1,4 +1,4 @@
-import { ConflictException, ForbiddenException, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { ConflictException, ForbiddenException, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../user/user.entity';
 import { Repository } from 'typeorm';
@@ -44,6 +44,10 @@ export class AuthService {
     }
 
     const accessToken = this.authHelper.generateToken(user);
+    //set accessToken cookie
+
+    
     return { accessToken };
   }
+
 }
