@@ -2,9 +2,10 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Re
 import { PostsService } from './posts.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { PaginationParams } from '@/common/types/paginationParams';
-import { JwtAuthGuard } from '@/auth/auth.guard';
-import RequestWithUser from '@/auth/requestWithUser.interface';
+import { PaginationParams } from '../common/types/paginationParams';
+import { JwtAuthGuard } from '../auth/auth.guard';
+import RequestWithUser from '../auth/requestWithUser.interface';
+import FindOneParams from '../common/findOneParams';
 
 @Controller('posts')
 export class PostsController {
@@ -28,19 +29,19 @@ export class PostsController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param() {id}: FindOneParams) {
     return this.postsService.findOne(id);
   }
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postsService.update(id, updatePostDto);
+  update(@Req() req: RequestWithUser, @Param() {id}: FindOneParams, @Body() updatePostDto: UpdatePostDto) {
+    return this.postsService.update(req, id, updatePostDto);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
-  remove(@Param('id') id: string) {
-    return this.postsService.remove(id);
+  delete(@Req() req: RequestWithUser, @Param() {id}: FindOneParams) {
+    return this.postsService.delete(req, id);
   }
 }

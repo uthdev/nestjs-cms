@@ -16,6 +16,7 @@ import { User } from './user.entity';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './user.dto';
 import RequestWithUser from '../auth/requestWithUser.interface';
+import FindOneParams from '../common/findOneParams';
 
 @Controller('users')
 export class UserController {
@@ -32,7 +33,7 @@ export class UserController {
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(ClassSerializerInterceptor)
-  public async findOne(@Param('id') id: string): Promise<User> {
+  public async findOne(@Param() {id }: FindOneParams): Promise<User> {
     return this.userService.findOne(id);
   }
 

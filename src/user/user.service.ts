@@ -1,7 +1,7 @@
-import RequestWithUser from '../auth/requestWithUser.interface';
 import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import RequestWithUser from '../auth/requestWithUser.interface';
 import { UpdateUserDto } from './user.dto';
 import { User } from './user.entity';
 

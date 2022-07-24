@@ -1,7 +1,8 @@
-import { User } from '@/user/user.entity';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThan, FindManyOptions, Repository } from 'typeorm';
+import { User } from '../user/user.entity';
+import RequestWithUser from '../auth/requestWithUser.interface';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import {Post} from './entities/post.entity';
@@ -62,8 +63,11 @@ export class PostsService {
     return post;
   }
 
-  public async update(id: string, updatePostDto: UpdatePostDto) {
+  public async update(req: RequestWithUser, id: string, updatePostDto: UpdatePostDto) {
     const post = await this.postsRepository.findOne({ where: { id }, relations: ['author'] });
+    if(req.user.id !== post.authorId) {
+      throw new ForbiddenException('You can only update your own post');
+    }
     if(!post) {
       throw new NotFoundException(`Post with id ${id} not found`);
     }
@@ -71,10 +75,15 @@ export class PostsService {
     return this.postsRepository.save(post);
   }
 
-  public async remove(id: string): Promise<void>{
-    const deleteResponse = await this.postsRepository.delete(id);
-    if (!deleteResponse.affected) {
+  public async delete(req: RequestWithUser, id: string): Promise<boolean>{
+    const post = await this.postsRepository.findOne({ where: { id } });
+    if (!post) {
       throw new NotFoundException(`Post with id ${id} not found`);
     }
+    if(req.user.id !== post?.authorId) {
+      throw new ForbiddenException('You can only delete your own post');
+    }
+    const deleteResponse = await this.postsRepository.delete(id);
+    return Boolean(deleteResponse.affected);
   }
 }

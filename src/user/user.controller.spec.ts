@@ -41,7 +41,7 @@ describe('UserController', () => {
     it('calls the UserService.findOne', async () => {
       expect(userService.findOne).not.toHaveBeenCalled();
       userService.findOne.mockResolvedValue({});
-      await userController.findOne('id');
+      await userController.findOne({id: 'id'});
       expect(userService.findOne).toHaveBeenCalledWith('id');
     });
   });

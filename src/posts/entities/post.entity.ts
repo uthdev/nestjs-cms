@@ -10,7 +10,7 @@ import {
   CreateDateColumn
 } from 'typeorm';
 import { User} from '../../user/user.entity';
-import { Category } from '@/categories/entities/category.entity';
+import { Category } from '../../categories/entities/category.entity';
 
 
 @Entity()
@@ -30,7 +30,7 @@ export class Post {
   public author: User
 
   @RelationId((post: Post) => post.author)
-  public authorId: number;
+  public authorId: string;
 
   @ManyToMany(() => Category, (category: Category) => category.posts)
   @JoinTable()

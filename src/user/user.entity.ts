@@ -1,4 +1,4 @@
-import {Post} from "@/posts/entities/post.entity";
+import {Post} from "../posts/entities/post.entity";
 import { Exclude } from "class-transformer";
 import { BaseEntity, Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
@@ -11,7 +11,7 @@ export class User extends BaseEntity {
   public email!: string;
 
   @Exclude()
-  @Column({ type: 'varchar' })
+  @Column({select: false})
   public password!: string;
 
   @Column({ type: 'varchar', nullable: true })
