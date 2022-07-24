@@ -1,6 +1,6 @@
-import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
+import { ConflictException, ForbiddenException, HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from '@/user/user.entity';
+import { User } from '../user/user.entity';
 import { Repository } from 'typeorm';
 import { RegisterDto, LoginDto } from './auth.dto';
 import { AuthHelper } from './auth.helper';
@@ -11,20 +11,20 @@ export class AuthService {
   private readonly userRepository: Repository<User>;
 
   @Inject(AuthHelper)
-  private readonly helper: AuthHelper;
+  private readonly authHelper: AuthHelper;
 
   public async register(body: RegisterDto): Promise<User | never> {
     const { email, password }: RegisterDto = body;
     let user: User = await this.userRepository.findOne({ where: { email } });
 
     if (user) {
-      throw new HttpException('User with this email already registered', HttpStatus.CONFLICT);
+      throw new ConflictException('User with this email already registered');
     }
 
     user = new User();
 
     user.email = email;
-    user.password = this.helper.encodePassword(password);
+    user.password = this.authHelper.encodePassword(password);
 
     return this.userRepository.save(user);
   }
@@ -34,16 +34,16 @@ export class AuthService {
     const user: User = await this.userRepository.findOne({ where: { email } });
 
     if (!user) {
-      throw new HttpException('Invalid email/password', HttpStatus.FORBIDDEN);
+      throw new ForbiddenException('Invalid email/password');
     }
 
-    const isPasswordValid: boolean = this.helper.isPasswordValid(password, user.password);
+    const isPasswordValid: boolean = this.authHelper.isPasswordValid(password, user.password);
 
     if (!isPasswordValid) {
-      throw new HttpException('Invalid email/password', HttpStatus.FORBIDDEN);
+      throw new ForbiddenException('Invalid email/password');
     }
 
-    const accessToken = this.helper.generateToken(user);
+    const accessToken = this.authHelper.generateToken(user);
     return { accessToken };
   }
 }

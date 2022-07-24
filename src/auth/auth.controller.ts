@@ -10,12 +10,12 @@ export class AuthController {
 
   @Post('signup')
   @UseInterceptors(ClassSerializerInterceptor)
-  private register(@Body() body: RegisterDto): Promise<User | never> {
+  public register(@Body() body: RegisterDto): Promise<User | never> {
     return this.service.register(body);
   }
 
   @Post('login')
-  private login(@Body() body: LoginDto): Promise<Record<string, string| never>> {
+  public login(@Body() body: LoginDto): Promise<Record<string, string| never>> {
     return this.service.login(body);
   }
 
